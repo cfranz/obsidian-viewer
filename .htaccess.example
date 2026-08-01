@@ -1,0 +1,36 @@
+# --- Zugriffsschutz (Basic Auth) vor der gesamten App -----------------
+AuthType Basic
+AuthName "Vault"
+# Absoluten Pfad anpassen:
+AuthUserFile /absoluter/pfad/zu/vault-viewer/.htpasswd
+Require valid-user
+
+# --- Saubere URLs + rohe Vault-Dateien schuetzen ----------------------
+# (index.php liest Dateien serverseitig vom Dateisystem, nicht ueber HTTP)
+<IfModule mod_rewrite.c>
+  # Von mod_rewrite in .htaccess vorausgesetzt - fehlt sie, gibt es 403.
+  # Falls der Host FollowSymLinks verbietet, stattdessen:  Options +SymLinksIfOwnerMatch
+  Options +FollowSymLinks
+
+  RewriteEngine On
+  # WICHTIG bei Installation im Unterordner: exakt den Pfad eintragen,
+  # der in der Browser-Adresse hinter der Domain steht (mit Slashes).
+  RewriteBase /obsidian-viewer/
+
+  # Direkter HTTP-Zugriff auf den vault/-Ordner wird gesperrt
+  RewriteRule ^vault/ - [F]
+
+  # Existierende echte Dateien/Ordner (index.php, Parsedown.php, ...) direkt liefern
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Alles andere pauschal an den Viewer (Pfad liest PHP aus REQUEST_URI).
+  # Kein $1 in der Ziel-URL -> keine Leerzeichen/Slashes in der Rewrite-Substitution.
+  RewriteRule ^.+$ index.php [QSA,L]
+</IfModule>
+
+# --- .ht*-Dateien nie ausliefern --------------------------------------
+<FilesMatch "^\.ht">
+  Require all denied
+</FilesMatch>
