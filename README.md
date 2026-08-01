@@ -6,6 +6,8 @@ einer Teilmenge von [Dataview](https://github.com/blacksmithgu/obsidian-dataview
 im Browser darstellt. Gedacht für den schnellen Zugriff auf das eigene
 Vault von Geräten, auf denen Obsidian nicht installiert ist.
 
+Eine [Demo](https://dev.carsten-franz.eu/obsidian-viewer/) ist hier eingerichtet. *(User: demo / Pass: demo)*
+
 ## Features
 
 - **Markdown-Rendering** über [Parsedown](https://github.com/erusev/parsedown)
